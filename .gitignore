@@ -94,3 +94,5 @@ undefined/
 
 docs/_build
 _build
+yarn.lock
+.gitignore
