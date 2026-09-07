@@ -153,6 +153,8 @@ export class SunSynkCardEditor
 			'Card width: text value (e.g. 640) or an entity providing a numeric width.',
 		center_no_grid:
 			'When Grid is hidden, shift and narrow the view to center Solar/Battery/Loads.',
+		use_colour_state:
+			"When icon is modern, will use the colour matching the inverter's state.",
 	};
 
 	// Utility: Parse unknown to finite number
@@ -631,6 +633,7 @@ export class SunSynkCardEditor
 											},
 										},
 									},
+									{ name: 'use_colour_state', selector: { boolean: {} } },
 									{ name: 'colour', selector: { color_rgb: {} } },
 									{ name: 'navigate', selector: { text: {} } },
 									{ name: 'label_autarky', selector: { text: {} } },
@@ -1960,7 +1963,7 @@ export class SunSynkCardEditor
 			case 'three_phase': {
 				const on = Boolean(
 					cfg?.inverter &&
-						(cfg.inverter as Record<string, unknown>).three_phase,
+					(cfg.inverter as Record<string, unknown>).three_phase,
 				);
 				const v = on ? '3P' : '1P';
 				return `${base} (${v})`;
