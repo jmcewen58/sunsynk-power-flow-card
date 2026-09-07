@@ -23,6 +23,10 @@ export const renderInverterElements = (
 	const { inverterColour, enableAutarky, enableTimer, priorityLoad } = data;
 
 	const { three_phase } = config.inverter;
+	const use_state_colour = config.inverter.use_colour_state;
+	const inverterColour2 = use_state_colour
+		? data.inverterStateColour
+		: data.inverterColour;
 
 	return html`
 		<!-- Inverter Elements -->
@@ -112,7 +116,7 @@ export const renderInverterElements = (
 									height="79" viewBox="0 0 74 91" preserveAspectRatio="xMidYMid meet"
 									opacity="${!data.genericInverterImage ? 0 : 1}">
 									<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)"
-									fill="${inverterColour}" stroke="none">
+									fill="${inverterColour2}" stroke="none">
 										<path d="${icons.inverter}"/>
 									</g>
 								</svg>
@@ -122,7 +126,7 @@ export const renderInverterElements = (
 								height="79" viewBox="0 0 74 91" preserveAspectRatio="xMidYMid meet"
 								opacity="${!data.genericInverterImage ? 0 : 1}">
 								<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)"
-								fill="${inverterColour}" stroke="none">
+								fill="${inverterColour2}" stroke="none">
 									<path d="${icons.inverter}"/>
 								</g>
 							</svg>`,
@@ -140,9 +144,11 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${data.stateUseTimer.state == 'on' && enableTimer !== 'no'
-							? ''
-							: 'none'}"
+						display="${
+							data.stateUseTimer.state == 'on' && enableTimer !== 'no'
+								? ''
+								: 'none'
+						}"
 						fill="${inverterColour}"
 						d="${icons.timerOn}"
 					/>
@@ -156,9 +162,11 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${data.stateUseTimer.state == 'off' && enableTimer !== 'no'
-							? ''
-							: 'none'}"
+						display="${
+							data.stateUseTimer.state == 'off' && enableTimer !== 'no'
+								? ''
+								: 'none'
+						}"
 						fill="${inverterColour}"
 						d="${icons.timerOff}"
 					/>
@@ -195,10 +203,11 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${priorityLoad === 'off' &&
-						(priorityLoad !== 'no' || !priorityLoad)
-							? ''
-							: 'none'}"
+						display="${
+							priorityLoad === 'off' && (priorityLoad !== 'no' || !priorityLoad)
+								? ''
+								: 'none'
+						}"
 						fill="${inverterColour}"
 						d="${icons.priorityLoadOff}"
 					/>
@@ -212,10 +221,11 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${priorityLoad === 'on' &&
-						(priorityLoad !== 'no' || !priorityLoad)
-							? ''
-							: 'none'}"
+						display="${
+							priorityLoad === 'on' && (priorityLoad !== 'no' || !priorityLoad)
+								? ''
+								: 'none'
+						}"
 						fill="${inverterColour}"
 						d="${icons.priorityLoadOn}"
 					/>
@@ -225,10 +235,11 @@ export const renderInverterElements = (
 					x="287"
 					y="273"
 					class="st3 left-align"
-					display="${priorityLoad === 'off' &&
-					(priorityLoad !== 'no' || !priorityLoad)
-						? ''
-						: 'none'}"
+					display="${
+						priorityLoad === 'off' && (priorityLoad !== 'no' || !priorityLoad)
+							? ''
+							: 'none'
+					}"
 					fill="${inverterColour}"
 				>
 					${localize('common.priority_batt')}
@@ -238,10 +249,11 @@ export const renderInverterElements = (
 					x="287"
 					y="273"
 					class="st3 left-align"
-					display="${priorityLoad === 'on' &&
-					(priorityLoad !== 'no' || !priorityLoad)
-						? ''
-						: 'none'}"
+					display="${
+						priorityLoad === 'on' && (priorityLoad !== 'no' || !priorityLoad)
+							? ''
+							: 'none'
+					}"
 					fill="${inverterColour}"
 				>
 					${localize('common.priority_load')}
@@ -281,14 +293,18 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${data.inverterProg.show === false || enableTimer === 'no'
-							? 'none'
-							: ''}"
-						class="${data.inverterProg.charge === 'none' ||
-						(data.stateUseTimer.state != 'off' &&
-							data.stateUseTimer.state != 'on')
-							? 'st12'
-							: ''}"
+						display="${
+							data.inverterProg.show === false || enableTimer === 'no'
+								? 'none'
+								: ''
+						}"
+						class="${
+							data.inverterProg.charge === 'none' ||
+							(data.stateUseTimer.state != 'off' &&
+								data.stateUseTimer.state != 'on')
+								? 'st12'
+								: ''
+						}"
 						fill="${inverterColour}"
 						d="${icons.progGridOn}"
 					/>
@@ -302,14 +318,18 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${data.inverterProg.show === false || enableTimer === 'no'
-							? 'none'
-							: ''}"
-						class="${data.inverterProg.charge === 'none' &&
-						(data.stateUseTimer.state === 'off' ||
-							data.stateUseTimer.state === 'on')
-							? ''
-							: 'st12'}"
+						display="${
+							data.inverterProg.show === false || enableTimer === 'no'
+								? 'none'
+								: ''
+						}"
+						class="${
+							data.inverterProg.charge === 'none' &&
+							(data.stateUseTimer.state === 'off' ||
+								data.stateUseTimer.state === 'on')
+								? ''
+								: 'st12'
+						}"
 						fill="${inverterColour}"
 						d="${icons.progGridOff}"
 					/>
