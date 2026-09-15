@@ -1,10 +1,22 @@
 import { svg } from 'lit';
 import { DataDto, sunsynkPowerFlowCardConfig } from '../../../types';
+import { renderText } from '../../../helpers/text-utils';
 
 export function renderPV(
 	id: string,
 	x: string,
 	y: string,
+	data: DataDto,
+	config: sunsynkPowerFlowCardConfig,
+) {
+	return renderPV1(id, x, y, '30', data, config);
+}
+
+export function renderPV1(
+	id: string,
+	x: string,
+	y: string,
+	h: string,
 	data: DataDto,
 	config: sunsynkPowerFlowCardConfig,
 ) {
@@ -14,6 +26,7 @@ export function renderPV(
 	const gradientId = `${id}LG`;
 	const efficiencyMap = {
 		pvtotal: 'totalPVEfficiency',
+		pvgttotal: 'totalGtPVEfficiency',
 		pv1: 'PV1Efficiency',
 		pv2: 'PV2Efficiency',
 		pv3: 'PV3Efficiency',
@@ -25,6 +38,7 @@ export function renderPV(
 	// Coerce efficiency to a number and clamp to [0, 100] to ensure valid gradient offsets
 	type EfficiencyKey =
 		| 'totalPVEfficiency'
+		| 'totalGtPVEfficiency'
 		| 'PV1Efficiency'
 		| 'PV2Efficiency'
 		| 'PV3Efficiency'
@@ -47,21 +61,39 @@ export function renderPV(
 	const strokeColor = efficiency === 0 ? 'grey' : solarColour;
 	const gradientUrl = useGradient ? `url(#${gradientId})` : strokeColor;
 	let className = '';
+	const mppts = config.solar.mppts;
 
-	if (id === 'pv2' && config.solar.mppts === 1) {
+	if (id === 'pv2' && mppts === 1) {
 		className = 'st12';
-	} else if (id === 'pv3' && [1, 2].includes(config.solar.mppts)) {
+	} else if (id === 'pv3' && [1, 2].includes(mppts)) {
 		className = 'st12';
-	} else if (id === 'pv4' && [1, 2, 3].includes(config.solar.mppts)) {
+	} else if (id === 'pv4' && [1, 2, 3].includes(mppts)) {
 		className = 'st12';
-	} else if (id === 'pv5' && [1, 2, 3, 4].includes(config.solar.mppts)) {
+	} else if (id === 'pv5' && [1, 2, 3, 4].includes(mppts)) {
 		className = 'st12';
-	} else if (id === 'pv6' && [1, 2, 3, 4, 5].includes(config.solar.mppts)) {
+	} else if (id === 'pv6' && [1, 2, 3, 4, 5].includes(mppts)) {
 		className = 'st12';
 	}
 
-	const style =
-		id === 'pvtotal' && config.solar.mppts === 1 ? 'display: none;' : '';
+	let gt = '';
+
+	if (id === 'pv1' && config.solar.pv1_grid_tied) {
+		gt = 'GT';
+	} else if (id === 'pv2' && config.solar.pv2_grid_tied) {
+		gt = 'GT';
+	} else if (id === 'pv3' && config.solar.pv3_grid_tied) {
+		gt = 'GT';
+	} else if (id === 'pv4' && config.solar.pv4_grid_tied) {
+		gt = 'GT';
+	} else if (id === 'pv5' && config.solar.pv5_grid_tied) {
+		gt = 'GT';
+	} else if (id === 'pv6' && config.solar.pv6_grid_tied) {
+		gt = 'GT';
+	} else if (id === 'pvgttotal') {
+		gt = 'GT';
+	}
+
+	const style = id === 'pvtotal' && mppts === 1 ? 'display: none;' : '';
 
 	return svg`
 		<svg
@@ -69,10 +101,20 @@ export function renderPV(
 			x="${x}"
 			y="${y}"
 			width="70"
-			height="30"
-			viewBox="0 0 70 30"
+			height="${h}"
+			viewBox="0 0 70 ${h}"
 			overflow="visible"
 		>
+			${renderText(
+				id + '_GT',
+				70,
+				-4,
+				true,
+				'st3 st8 right-align',
+				solarColour,
+				gt,
+				gt === '',
+			)}
 			${
 				useGradient
 					? svg`<defs>
@@ -95,7 +137,7 @@ export function renderPV(
 			<rect
 				id="${id}"
 				width="70"
-				height="30"
+				height="${h}"
 				rx="4.5"
 				ry="4.5"
 				fill="none"

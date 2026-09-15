@@ -139,16 +139,22 @@ export interface sunsynkPowerFlowCardConfig extends LovelaceCardConfig {
 		max_power: number;
 		pv1_name: string;
 		pv1_max_power: number;
+		pv1_grid_tied: boolean;
 		pv2_name: string;
 		pv2_max_power: number;
+		pv2_grid_tied: boolean;
 		pv3_name: string;
 		pv3_max_power: number;
+		pv3_grid_tied: boolean;
 		pv4_name: string;
 		pv4_max_power: number;
+		pv4_grid_tied: boolean;
 		pv5_name: string;
 		pv5_max_power: number;
+		pv5_grid_tied: boolean;
 		pv6_name: string;
 		pv6_max_power: number;
+		pv6_grid_tied: boolean;
 		auto_scale: boolean;
 		display_mode: number;
 		dynamic_colour: boolean;
@@ -248,6 +254,7 @@ export interface sunsynkPowerFlowCardConfig extends LovelaceCardConfig {
 		disconnected_icon: string;
 		navigate: string;
 		invert_flow: boolean;
+		non_essential_navigate: string;
 	};
 	entities: CardConfigEntities;
 }
@@ -329,6 +336,7 @@ export interface CardConfigEntities {
 	aux_load1_extra: string;
 	aux_load2_extra: string;
 	pv_total: string;
+	pv_gt_total: string;
 	aux_connected_status: string;
 	aux_load1: string;
 	aux_load2: string;
@@ -594,6 +602,7 @@ export interface DataDto {
 	stateNonessentialLoad3: CustomEntity;
 	stateMaxSellPower: CustomEntity;
 	totalPVEfficiency;
+	totalGtPVEfficiency;
 	PV1Efficiency;
 	PV2Efficiency;
 	PV3Efficiency;
@@ -619,4 +628,16 @@ export interface DataDto {
 	customGridIconColour;
 	maximumSOC;
 	batteryCount;
+	isDischarging: boolean;
+	flowGridColour: string;
+	flowNonEssColour: string;
+	hasGtPV: boolean;
+	batteryPercentageNE;
+	pvPercentageNE;
+	gridPercentageNE;
+	essIconNESize;
+	essIconNE;
+	totalAllPV;
+	mpptsGt: number;
+	totalGtPV: number;
 }
