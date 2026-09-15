@@ -72,6 +72,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 	@query('#grid-flow') gridFlow?: SVGSVGElement;
 	@query('#grid1-flow') grid1Flow?: SVGSVGElement;
 	@query('#solar-flow') solarFlow?: SVGSVGElement;
+	@query('#gtsolar-flow') gtsolarFlow?: SVGSVGElement;
 	@query('#pv1-flow') pv1Flow?: SVGSVGElement;
 	@query('#pv2-flow') pv2Flow?: SVGSVGElement;
 	@query('#pv3-flow') pv3Flow?: SVGSVGElement;
@@ -264,6 +265,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			this.gridFlow,
 			this.grid1Flow,
 			this.solarFlow,
+			this.gtsolarFlow,
 			this.pv1Flow,
 			this.pv2Flow,
 			this.pv3Flow,
@@ -470,6 +472,8 @@ export class SunsynkPowerFlowCard extends LitElement {
 			'entities.battery_current_direction',
 			{ state: '' },
 		);
+		const batteryThreshold = Utils.toNum(config.battery?.path_threshold, 0);
+
 		const stateBatteryRatedCapacity = this.getEntity(
 			'entities.battery_rated_capacity',
 			{ state: '' },
@@ -642,6 +646,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			state: 'undefined',
 		});
 		const statePVTotal = this.getEntity('entities.pv_total');
+		const statePVGtTotal = this.getEntity('entities.pv_gt_total');
 		const stateTotalPVGeneration = this.getEntity(
 			'entities.total_pv_generation',
 		);
@@ -1022,21 +1027,49 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const pv6PowerWatts = statePV6Power.toPower();
 
 		const totalsolar =
-			pv1PowerWatts +
-			pv2PowerWatts +
-			pv3PowerWatts +
-			pv4PowerWatts +
-			pv5PowerWatts +
-			pv6PowerWatts;
+			(config.solar.pv1_grid_tied ? 0 : pv1PowerWatts) +
+			(config.solar.pv2_grid_tied ? 0 : pv2PowerWatts) +
+			(config.solar.pv3_grid_tied ? 0 : pv3PowerWatts) +
+			(config.solar.pv4_grid_tied ? 0 : pv4PowerWatts) +
+			(config.solar.pv5_grid_tied ? 0 : pv5PowerWatts) +
+			(config.solar.pv6_grid_tied ? 0 : pv6PowerWatts);
+
 		const totalPV = config.entities?.pv_total
 			? statePVTotal.toNum()
 			: totalsolar;
 
+		const totalgtsolar =
+			(config.solar.pv1_grid_tied ? pv1PowerWatts : 0) +
+			(config.solar.pv2_grid_tied ? pv2PowerWatts : 0) +
+			(config.solar.pv3_grid_tied ? pv3PowerWatts : 0) +
+			(config.solar.pv4_grid_tied ? pv4PowerWatts : 0) +
+			(config.solar.pv5_grid_tied ? pv5PowerWatts : 0) +
+			(config.solar.pv6_grid_tied ? pv6PowerWatts : 0);
+
+		const totalGtPV = config.entities?.pv_gt_total
+			? statePVGtTotal.toNum()
+			: totalgtsolar;
+
+		const totalAllPV = totalPV + totalGtPV;
+
 		const solarColour = !config.solar.dynamic_colour
 			? this.colourConvert(config.solar?.colour)
-			: Utils.toNum(totalPV, 0) > Utils.toNum(config.solar?.off_threshold, 0)
+			: Utils.toNum(totalAllPV, 0) > Utils.toNum(config.solar?.off_threshold, 0)
 				? this.colourConvert(config.solar?.colour)
 				: 'grey';
+		const mppts = config.solar.mppts;
+
+		const mpptsGt: number =
+			(config.solar.pv1_grid_tied && [1, 2, 3, 4, 5, 6].includes(mppts)
+				? 1
+				: 0) +
+			(config.solar.pv2_grid_tied && [2, 3, 4, 5, 6].includes(mppts) ? 1 : 0) +
+			(config.solar.pv3_grid_tied && [3, 4, 5, 6].includes(mppts) ? 1 : 0) +
+			(config.solar.pv4_grid_tied && [4, 5, 6].includes(mppts) ? 1 : 0) +
+			(config.solar.pv5_grid_tied && [5, 6].includes(mppts) ? 1 : 0) +
+			(config.solar.pv6_grid_tied && mppts === 6 ? 1 : 0);
+
+		const hasGtPV = mpptsGt > 0;
 
 		//essentialPower = inverter_power_175 + grid_power_169 - aux_power_166
 		//nonessentialPower = grid_ct_power_172 - grid_power_169
@@ -1060,6 +1093,28 @@ export class SunsynkPowerFlowCard extends LitElement {
 					? gridPower + gridPowerL2 + gridPowerL3 - autoScaledGridPower
 					: stateNonessentialPower.toPower();
 		}
+
+		const gridPowerInv = config.grid.invert_flow
+			? -totalGridPower
+			: totalGridPower;
+		const solarGtInv = config.solar.invert_flow ? -totalGtPV : totalGtPV;
+
+		const isDischarging = autoScaledGridPower < 0;
+
+		const solarGtSelfConsumed =
+			solarGtInv == 0 || isDischarging || nonessentialPower > totalGtPV
+				? 0
+				: (gridPowerInv >= 0 ? solarGtInv : solarGtInv + gridPowerInv) -
+					nonessentialPower;
+
+		if (gridPowerInv < 0 && solarGtInv != 0) gridColour = solarColour;
+
+		const totalInverterPV =
+			!config.entities?.pv_total && solarGtSelfConsumed > 0
+				? totalPV + solarGtSelfConsumed
+				: totalPV;
+
+		//console.log(`${totalInverterPV} totalInverterPV, ${totalAllPV} totalAllPV, ${totalPV} totalPV`);
 
 		const essentialPower =
 			essential_power === 'none' || !essential_power
@@ -1942,8 +1997,8 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const solarLineWidth = !config.solar.max_power
 			? minLineWidth
 			: this.dynamicLineWidth(
-					totalPV,
-					solarMaxPower.toNum() || totalPV,
+					totalAllPV,
+					solarMaxPower.toNum() || totalAllPV,
 					maxLineWidth,
 					minLineWidth,
 				);
@@ -1953,8 +2008,17 @@ export class SunsynkPowerFlowCard extends LitElement {
 			const speed =
 				config.solar.animation_speed -
 				(config.solar.animation_speed - 1) *
-					(totalPV / (solarMaxPower.toNum() || totalPV));
+					(totalAllPV / (solarMaxPower.toNum() || totalAllPV));
 			this.changeAnimationSpeed(`solar`, speed);
+		}
+
+		if (config && config.solar && config.solar.animation_speed) {
+			const speed =
+				config.solar.animation_speed -
+				(config.solar.animation_speed - 1) *
+					(solarGtInv / (solarMaxPower.toNum() || solarGtInv));
+			this.changeAnimationSpeed(`gtsolar`, speed);
+			this.changeAnimationSpeed(`gtsolar1`, speed);
 		}
 
 		if (config && config.solar && config.solar.animation_speed) {
@@ -2040,8 +2104,16 @@ export class SunsynkPowerFlowCard extends LitElement {
 					(Math.abs(totalGridPower) /
 						(gridMaxPower.toNum() || Math.abs(totalGridPower)));
 			this.changeAnimationSpeed(`grid1`, speed);
-			this.changeAnimationSpeed(`grid`, speed);
 			this.changeAnimationSpeed(`grid2`, speed);
+		}
+
+		if (config && config.grid && config.grid.animation_speed) {
+			const speed =
+				config.grid.animation_speed -
+				(config.grid.animation_speed - 1) *
+					(Math.abs(autoScaledGridPower) /
+						(gridMaxPower.toNum() || Math.abs(autoScaledGridPower)));
+			this.changeAnimationSpeed(`grid`, speed);
 		}
 
 		if (config && config.grid && config.grid.animation_speed) {
@@ -2054,9 +2126,19 @@ export class SunsynkPowerFlowCard extends LitElement {
 		}
 
 		//Calculate dynamic colour for load icon based on the contribution of the power source (battery, grid, solar) supplying the load
+		const batteryPower1 =
+			config.battery.invert_flow === true
+				? -1 * batteryPowerTotal
+				: batteryPowerTotal;
+		const batteryIsCharging = batteryPower1 < 0;
+		const inverterPVtoLoad = batteryIsCharging
+			? totalInverterPV + batteryPower1
+			: batteryPower1 - batteryThreshold <= 0
+				? totalInverterPV
+				: totalInverterPV - batteryPower1 - batteryThreshold;
 
-		const pvPercentageRaw =
-			totalPV === 0
+		const pvPercentageRaw = !hasGtPV
+			? totalPV === 0
 				? 0
 				: priorityLoad === 'off' || !priorityLoad
 					? config.battery.invert_flow === true
@@ -2086,10 +2168,17 @@ export class SunsynkPowerFlowCard extends LitElement {
 							(threePhase
 								? essentialPower + Math.max(auxPower, 0)
 								: essentialPower)) *
-						100;
+						100
+			: inverterPVtoLoad <= 0
+				? 0
+				: (inverterPVtoLoad /
+						(threePhase
+							? essentialPower + Math.max(auxPower, 0)
+							: essentialPower)) *
+					100;
 
-		const batteryPercentageRaw =
-			config.battery.invert_flow === true
+		const batteryPercentageRaw = !hasGtPV
+			? config.battery.invert_flow === true
 				? batteryPowerTotal >= 0
 					? 0
 					: (Math.abs(batteryPowerTotal) /
@@ -2103,7 +2192,14 @@ export class SunsynkPowerFlowCard extends LitElement {
 							(threePhase
 								? essentialPower + Math.max(auxPower, 0)
 								: essentialPower)) *
-						100;
+						100
+			: batteryIsCharging || batteryPower1 - batteryThreshold <= 0
+				? 0
+				: ((batteryPower - batteryThreshold) /
+						(threePhase
+							? essentialPower + Math.max(auxPower, 0)
+							: essentialPower)) *
+					100;
 
 		//console.log(`${pvPercentageRaw} % RAW PV to load, ${batteryPercentageRaw} % RAW Bat to load`);
 
@@ -2133,20 +2229,86 @@ export class SunsynkPowerFlowCard extends LitElement {
 
 		//console.log(`${pvPercentage} % PVPercentage, ${batteryPercentage} % BatteryPercentage, ${gridPercentage} % GridPercentage`);
 
+		//console.log(`${totalInverterPV} totalInverterPV, ${batteryPower1} batteryPower1, ${batteryIsCharging} isCharging`);
+
+		//Calculate dynamic colour for NE load icon based on the contribution of the power source (battery, grid, solar) supplying the load
+		const batteryPowerNE = autoScaledGridPower >= 0 ? 0 : -autoScaledGridPower;
+
+		const batteryPercentageNERaw =
+			batteryPowerNE === 0
+				? 0
+				: (Math.abs(batteryPowerNE) /
+						(threePhase
+							? nonessentialPower + Math.max(auxPower, 0)
+							: nonessentialPower)) *
+					100;
+
+		const pvPercentageNERaw =
+			totalGtPV === 0 || batteryPercentageNERaw >= 100
+				? 0
+				: gridPowerInv <= 0
+					? (totalGtPV - gridPowerInv - batteryPowerNE) /
+						(threePhase
+							? nonessentialPower + Math.max(auxPower, 0)
+							: nonessentialPower)
+					: ((totalGtPV - batteryPowerNE) /
+							(threePhase
+								? nonessentialPower + Math.max(auxPower, 0)
+								: nonessentialPower)) *
+						100;
+
+		//console.log(`${pvPercentageNERaw} % RAW PVNE to load, ${batteryPercentageNERaw} % RAW BatNE to load`);
+
+		// Normalize percentages
+		const totalPercentageNE = pvPercentageNERaw + batteryPercentageNERaw;
+		const normalizedPvPercentageNE =
+			totalPercentageNE === 0
+				? 0
+				: (pvPercentageNERaw / totalPercentageNE) * 100;
+		const normalizedBatteryPercentageNE =
+			totalPercentageNE === 0
+				? 0
+				: (batteryPercentageNERaw / totalPercentageNE) * 100;
+
+		//console.log(`${normalizedPvPercentageNE} % normalizedPVPercentageNE to load, ${normalizedBatteryPercentageNE} % normalizedBatteryPercentageNE to load`);
+
+		let pvPercentageNE = 0;
+		let batteryPercentageNE = 0;
+		let gridPercentageNE = 0;
+		if (totalPercentageNE > 100) {
+			pvPercentageNE = Utils.toNum(normalizedPvPercentageNE, 0);
+			batteryPercentageNE = Utils.toNum(normalizedBatteryPercentageNE, 0);
+		} else {
+			pvPercentageNE = Utils.toNum(Math.min(pvPercentageNERaw, 100), 0);
+			batteryPercentageNE = Utils.toNum(
+				Math.min(batteryPercentageNERaw, 100),
+				0,
+			);
+			gridPercentageNE =
+				totalGridPower > 0 ? 100 - (pvPercentageNE + batteryPercentageNE) : 0;
+		}
+
+		//console.log(`${pvPercentageNE} % PVPercentageNE, ${batteryPercentageNE} % BatteryPercentageNE, ${gridPercentageNE} % GridPercentageNE`);
+
 		//Calculate dynamic colour for battery icon based on the contribution of the power source (grid, solar) supplying the battery
-		const pvPercentageRawBat =
-			totalPV === 0 ||
-			(config.battery.invert_flow === true
-				? batteryPowerTotal <= 0
-				: batteryPowerTotal >= 0)
+		const batteryPower2 = batteryIsCharging ? -batteryPower1 : batteryPower1;
+		const pvPercentageRawBat = !hasGtPV
+			? totalPV === 0 ||
+				(config.battery.invert_flow === true
+					? batteryPowerTotal <= 0
+					: batteryPowerTotal >= 0)
 				? 0
 				: priorityLoad === 'off' || !priorityLoad
 					? (totalPV / Math.abs(batteryPowerTotal)) * 100
-					: ((totalPV - essentialPower) / Math.abs(batteryPowerTotal)) * 100;
-		const gridPercentageRawBat =
-			(config.battery.invert_flow === true
-				? batteryPower <= 0
-				: batteryPower >= 0) || totalGridPower <= 0
+					: ((totalPV - essentialPower) / Math.abs(batteryPowerTotal)) * 100
+			: !batteryIsCharging
+				? 0
+				: (100 * totalInverterPV) / batteryPower2;
+
+		const gridPercentageRawBat = !hasGtPV
+			? (config.battery.invert_flow === true
+					? batteryPower <= 0
+					: batteryPower >= 0) || totalGridPower <= 0
 				? 0
 				: priorityLoad === 'on'
 					? totalPV - essentialPower >= Math.abs(batteryPowerTotal)
@@ -2158,7 +2320,10 @@ export class SunsynkPowerFlowCard extends LitElement {
 						? 0
 						: ((Math.abs(batteryPowerTotal) - totalPV) /
 								Math.abs(batteryPowerTotal)) *
-							100;
+							100
+			: !batteryIsCharging
+				? 0
+				: (autoScaledGridPower - solarGtSelfConsumed) / batteryPower2;
 
 		//console.log(`${pvPercentageRawBat} % RAW PV to charge battery, ${gridPercentageRawBat} % RAW Grid to charge battery`);
 		// Normalize percentages
@@ -2174,20 +2339,21 @@ export class SunsynkPowerFlowCard extends LitElement {
 
 		let pvPercentageBat = 0;
 		let gridPercentageBat = 0;
-		if (totalPercentageBat > 100) {
+		if (totalPercentageBat < 100) {
 			pvPercentageBat = Utils.toNum(normalizedPvPercentage_bat, 0);
 			gridPercentageBat = Utils.toNum(normalizedGridPercentage, 0);
 		} else {
 			pvPercentageBat = Utils.toNum(Math.min(pvPercentageRawBat, 100), 0);
 			gridPercentageBat = Utils.toNum(Math.min(gridPercentageRawBat, 100), 0);
 		}
+		//console.log(`${pvPercentageBat} % PV to charge battery, ${gridPercentageBat} % Grid to charge battery`);
 
 		let flowBatColour: string;
 		switch (true) {
-			case pvPercentageBat >= Utils.toNum(config.battery?.path_threshold, 0):
+			case pvPercentageBat >= batteryThreshold:
 				flowBatColour = Utils.toHexColor(solarColour);
 				break;
-			case gridPercentageBat >= Utils.toNum(config.battery?.path_threshold, 0):
+			case gridPercentageBat >= batteryThreshold:
 				flowBatColour = Utils.toHexColor(gridColour);
 				break;
 			default:
@@ -2224,11 +2390,32 @@ export class SunsynkPowerFlowCard extends LitElement {
 			case gridPercentage >= Utils.toNum(config.load?.path_threshold, 0):
 				flowInvColour = Utils.toHexColor(gridColour);
 				break;
-			case gridPercentageBat >= Utils.toNum(config.battery?.path_threshold, 0):
+			case gridPercentageBat >= batteryThreshold:
 				flowInvColour = Utils.toHexColor(gridColour);
 				break;
 			default:
 				flowInvColour = Utils.toHexColor(inverterColour);
+				break;
+		}
+
+		let flowGridColour: string;
+		switch (true) {
+			case isDischarging:
+				flowGridColour = Utils.toHexColor(batteryColour);
+				break;
+			default:
+				flowGridColour = Utils.toHexColor(gridColour);
+				break;
+		}
+
+		let flowNonEssColour: string;
+		switch (true) {
+			case isDischarging &&
+				Math.abs(autoScaledGridPower) >= 0.97 * nonessentialPower:
+				flowNonEssColour = Utils.toHexColor(batteryColour);
+				break;
+			default:
+				flowNonEssColour = Utils.toHexColor(gridColour);
 				break;
 		}
 
@@ -2238,17 +2425,21 @@ export class SunsynkPowerFlowCard extends LitElement {
 		let essIconSize: number;
 
 		switch (true) {
-			case pvPercentageRaw >= 100 &&
+			case !hasGtPV &&
+				pvPercentageRaw >= 100 &&
 				batteryPercentageRaw <= 5 &&
 				totalGridPower - nonessentialPower < 50 &&
 				config.load.dynamic_icon:
+			case hasGtPV && pvPercentage >= 75 && config.load.dynamic_icon:
 				essIcon = icons.essPv;
 				essIconSize = 1;
 				break;
-			case batteryPercentageRaw >= 100 &&
+			case !hasGtPV &&
+				batteryPercentageRaw >= 100 &&
 				pvPercentageRaw <= 5 &&
 				totalGridPower - nonessentialPower < 50 &&
 				config.load.dynamic_icon:
+			case hasGtPV && batteryPercentage >= 75 && config.load.dynamic_icon:
 				essIcon = icons.essBat;
 				essIconSize = 0;
 				break;
@@ -2262,6 +2453,35 @@ export class SunsynkPowerFlowCard extends LitElement {
 			default:
 				essIcon = icons.ess;
 				essIconSize = 0;
+				break;
+		}
+
+		let essIconNE: string;
+		let essIconNESize: number;
+
+		switch (true) {
+			case pvPercentageNE >= 75 &&
+				//batteryPercentageNERaw <= 5 &&
+				config.load.dynamic_icon:
+				essIconNE = icons.essPv;
+				essIconNESize = 1;
+				break;
+			case batteryPercentageNE >= 75 &&
+				//pvPercentageNERaw <= 5 &&
+				config.load.dynamic_icon:
+				essIconNE = icons.essBat;
+				essIconNESize = 0;
+				break;
+			case pvPercentageNERaw < 5 &&
+				batteryPercentageNERaw < 5 &&
+				gridPercentage > 0 &&
+				config.load.dynamic_icon:
+				essIconNE = icons.essGrid;
+				essIconNESize = 0;
+				break;
+			default:
+				essIconNE = icons.ess;
+				essIconNESize = 0;
 				break;
 		}
 
@@ -2298,7 +2518,14 @@ export class SunsynkPowerFlowCard extends LitElement {
 			!config.solar.max_power || config.solar.efficiency === 0
 				? 100
 				: Utils.toNum(
-						Math.min((totalPV / solarMaxPower.toNum()) * 100, 200),
+						Math.min((totalAllPV / solarMaxPower.toNum()) * 100, 200),
+						0,
+					);
+		const totalGtPVEfficiency =
+			!config.solar.max_power || config.solar.efficiency === 0
+				? 100
+				: Utils.toNum(
+						Math.min((totalGtPV / solarMaxPower.toNum()) * 100, 200),
 						0,
 					);
 		const PV1Efficiency =
@@ -2524,6 +2751,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 		 * There is a need to evaluate the data being passed, as there might be duplication.
 		 * Future improvements should focus on optimizing the data structure and ensuring a unified naming standard.
 		 */
+
 		const data: DataDto = {
 			timestamp_id: new Date().getTime(),
 			config,
@@ -2738,6 +2966,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			auxDynamicColourLoad2,
 			stateMaxSellPower,
 			totalPVEfficiency,
+			totalGtPVEfficiency,
 			PV1Efficiency,
 			PV2Efficiency,
 			PV3Efficiency,
@@ -2763,6 +2992,18 @@ export class SunsynkPowerFlowCard extends LitElement {
 			customGridIconColour,
 			maximumSOC,
 			batteryCount,
+			isDischarging,
+			flowGridColour,
+			flowNonEssColour,
+			hasGtPV,
+			batteryPercentageNE,
+			pvPercentageNE,
+			gridPercentageNE,
+			essIconNESize,
+			essIconNE,
+			totalAllPV,
+			mpptsGt,
+			totalGtPV,
 		};
 
 		let template: TemplateResult | null = null;

@@ -658,11 +658,17 @@ export class SunSynkCardEditor
 												},
 												{ name: 'show_daily', selector: { boolean: {} } },
 												{ name: 'pv1_name', selector: { text: {} } },
+												{ name: 'pv1_grid_tied', selector: { boolean: {} } },
 												{ name: 'pv2_name', selector: { text: {} } },
+												{ name: 'pv2_grid_tied', selector: { boolean: {} } },
 												{ name: 'pv3_name', selector: { text: {} } },
+												{ name: 'pv3_grid_tied', selector: { boolean: {} } },
 												{ name: 'pv4_name', selector: { text: {} } },
+												{ name: 'pv4_grid_tied', selector: { boolean: {} } },
 												{ name: 'pv5_name', selector: { text: {} } },
+												{ name: 'pv5_grid_tied', selector: { boolean: {} } },
 												{ name: 'pv6_name', selector: { text: {} } },
+												{ name: 'pv6_grid_tied', selector: { boolean: {} } },
 												{ name: 'auto_scale', selector: { boolean: {} } },
 												{
 													name: 'display_mode',
@@ -1218,6 +1224,10 @@ export class SunSynkCardEditor
 												{ name: 'export_icon', selector: { icon: {} } },
 												{ name: 'disconnected_icon', selector: { icon: {} } },
 												{ name: 'navigate', selector: { text: {} } },
+												{
+													name: 'non_essential_navigate',
+													selector: { text: {} },
+												},
 												{ name: 'invert_flow', selector: { boolean: {} } },
 											],
 										},
@@ -1375,6 +1385,12 @@ export class SunSynkCardEditor
 											},
 											{
 												name: 'pv_total',
+												selector: {
+													entity: { device_class: SensorDeviceClass.POWER },
+												},
+											},
+											{
+												name: 'pv_gt_total',
 												selector: {
 													entity: { device_class: SensorDeviceClass.POWER },
 												},

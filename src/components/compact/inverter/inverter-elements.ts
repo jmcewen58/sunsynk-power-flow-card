@@ -28,6 +28,8 @@ export const renderInverterElements = (
 		? data.inverterStateColour
 		: data.inverterColour;
 
+	const largeGridBox: boolean = data.showNonessential || data.hasGtPV;
+
 	return html`
 		<!-- Inverter Elements -->
 		<svg
@@ -37,8 +39,8 @@ export const renderInverterElements = (
 		>
 			${renderText(
 				'autarkye_value',
-				127,
-				260,
+				largeGridBox ? '180' : '127',
+				largeGridBox ? '245' : '260',
 				enableAutarky === AutarkyType.No,
 				enableAutarky === AutarkyType.Energy ? 'st4 st8 left-align' : 'st12',
 				inverterColour,
@@ -47,8 +49,8 @@ export const renderInverterElements = (
 			)}
 			${renderText(
 				'ratioe_value',
-				173,
-				260,
+				largeGridBox ? '180' : '173',
+				largeGridBox ? '185' : '260',
 				enableAutarky === AutarkyType.No,
 				enableAutarky === AutarkyType.Energy ? 'st4 st8 left-align' : 'st12',
 				inverterColour,
@@ -57,8 +59,8 @@ export const renderInverterElements = (
 			)}
 			${renderText(
 				'autarkyp_value',
-				127,
-				260,
+				largeGridBox ? '180' : '127',
+				largeGridBox ? '245' : '260',
 				enableAutarky === AutarkyType.No,
 				enableAutarky === AutarkyType.Power ? 'st4 st8 left-align' : 'st12',
 				inverterColour,
@@ -67,8 +69,8 @@ export const renderInverterElements = (
 			)}
 			${renderText(
 				'ratiop_value',
-				173,
-				260,
+				largeGridBox ? '180' : '173',
+				largeGridBox ? '185' : '260',
 				enableAutarky === AutarkyType.No,
 				enableAutarky === AutarkyType.Power ? 'st4 st8 left-align' : 'st12',
 				inverterColour,
@@ -77,8 +79,8 @@ export const renderInverterElements = (
 			)}
 			${renderText(
 				'autarky',
-				127,
-				273,
+				largeGridBox ? '180' : '127',
+				largeGridBox ? '258' : '273',
 				enableAutarky === AutarkyType.No,
 				'st3 left-align',
 				inverterColour,
@@ -87,8 +89,8 @@ export const renderInverterElements = (
 			)}
 			${renderText(
 				'ratio',
-				173,
-				273,
+				largeGridBox ? '180' : '173',
+				largeGridBox ? '198' : '273',
 				enableAutarky === AutarkyType.No,
 				'st3 left-align',
 				inverterColour,
