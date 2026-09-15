@@ -9,7 +9,7 @@ import {
 	UnitOfPower,
 } from '../../../const';
 import { icons } from '../../../helpers/icons';
-import { renderPV } from '../../shared/pv/render-pv';
+import { renderPV, renderPV1 } from '../../shared/pv/render-pv';
 import { renderPVFlow } from '../../shared/pv/render-pv-flow';
 import { createTextWithPopup, renderText } from '../../../helpers/text-utils';
 
@@ -25,10 +25,19 @@ export const renderSolarElements = (
 		solarShowDaily,
 		largeFont,
 		durationCur,
+		showNonessential,
+		hasGtPV,
+		totalAllPV,
+		mpptsGt,
+		totalGtPV,
 	} = data;
 
 	const { auto_scale, efficiency, mppts, display_mode, invert_flow } =
 		config.solar;
+
+	const largeGridBox: boolean = showNonessential || hasGtPV;
+	const mpptsNGt = mppts > mpptsGt ? mppts - mpptsGt : 0;
+	const bigTotalBox = config.cardstyle != 'full' && hasGtPV && mpptsNGt > 0;
 
 	return html`
 		<!-- Solar Elements -->
@@ -39,7 +48,8 @@ export const renderSolarElements = (
 				: 'inline'};"
 			x="${config.wide ? '10%' : '0%'}"
 		>
-			${renderPV('pvtotal', '205', '116.5', data, config)}
+			${renderPV1('pvtotal', '205', '116.5', bigTotalBox ? '45' : '30', data, config)}
+			${bigTotalBox ? renderPV('pvgttotal', config.wide ? '33' : '103', '130', data, config) : ''}
 			${renderPV('pv1', mppts === 1 ? '205' : '154', '54.5', data, config)}
 			${renderPV('pv2', '254', '54.5', data, config)}
 			${renderPV('pv3', '78', '54.5', data, config)}
@@ -324,17 +334,35 @@ export const renderSolarElements = (
 			${renderText(
 				'total_pv_efficiency',
 				215,
-				156,
+				bigTotalBox ? '168' : '156',
 				mppts === 1,
 				[2, 3].includes(efficiency) ? 'st3 st8' : 'st12',
 				solarColour,
 				`${data.totalPVEfficiency}%`,
 				true,
 			)}
+			${renderText(
+				'pv_gt_ efficiency',
+				config.wide ? '43' : '113',
+				'166',
+				mppts > 1 && mpptsGt >= 1,
+				data.totalGtPVEfficiency > 0 ? 'st3 st8' : 'st12',
+				solarColour,
+				`${data.totalGtPVEfficiency}%`,
+				false,
+			)}
 			${renderPVFlow(
 				'pv1',
 				mppts === 1
-					? 'M 239.23 84 L 239 190'
+					? !config.solar.pv1_grid_tied
+						? 'M 239.23 84 L 239 190'
+						: largeGridBox
+							? config.wide
+								? 'M 239.23 84 L 239.23 130 Q 239.23 140 229 140 L 78 140 Q 68 140 68 150 L 68 184'
+								: 'M 239.23 84 L 239.23 130 Q 239.23 140 229 140 L 148 140 Q 138 140 138 150 L 138 184'
+							: config.wide
+								? 'M 239.23 84 L 239.23 130 Q 239.23 140 229 140 L 78 140 Q 68 140 68 150 L 68 203'
+								: 'M 239.23 84 L 239.23 130 Q 239.23 140 229 140 L 148 140 Q 138 140 138 150 L 138 203'
 					: 'M 187 84 L 187 122 Q 187 132 195 132 L 205 132.03',
 				solarColour,
 				data.pv1LineWidth,
@@ -378,14 +406,40 @@ export const renderSolarElements = (
 			)}
 			${renderPVFlow(
 				'solar',
-				'M 239 190 L 239 147',
+				bigTotalBox ? 'M 239 190 L 239 162' : 'M 239 190 L 239 147',
 				solarColour,
 				data.solarLineWidth,
 				totalPV,
 				durationCur['solar'],
 				invert_flow,
 				minLineWidth,
-				mppts === 1 ? 'st12' : '',
+				mppts === 1 || mpptsNGt === 0 ? 'st12' : '',
+				'1;0',
+			)}
+			${renderPVFlow(
+				'gtsolar',
+				bigTotalBox
+					? largeGridBox
+						? config.wide
+							? 'M 205 145 L 103 145 M 68 160 L 68 184'
+							: 'M 205 145 L 173 145 M 138 160 L 138 184'
+						: config.wide
+							? 'M 205 145 L 103 145 M 68 160 L 68 203'
+							: 'M 205 145 L 173 145 M 138 160 L 138 203'
+					: largeGridBox
+						? config.wide
+							? 'M 239.23 147 L 239.23 155 Q 239.23 165 229 165 L 78 165 Q 68 165 68 175 L 68 184'
+							: 'M 239.23 147 L 239.23 155 Q 239.23 165 229 165 L 148 165 Q 138 165 138 175 L 138 184'
+						: config.wide
+							? 'M 239.23 147 L 239.23 155 Q 239.23 165 229 165 L 788 165 Q 68 165 68 175 L 68 203'
+							: 'M 239.23 147 L 239.23 155 Q 239.23 165 229 165 L 148 165 Q 138 165 138 175 L 138 203',
+				solarColour,
+				data.solarLineWidth,
+				totalGtPV,
+				durationCur['gtsolar'],
+				true,
+				minLineWidth,
+				mppts === 1 || !hasGtPV ? 'st12' : '',
 				'1;0',
 			)}
 			${config.solar?.navigate
@@ -623,12 +677,61 @@ export const renderSolarElements = (
 				(e) => Utils.handlePopup(e, config.entities.environment_temp),
 				true,
 			)}
-			${config.entities?.pv_total
-				? svg`
+			${renderText(
+				'pvgttotal_power',
+				config.wide ? '60' : '136',
+				148.5,
+				mppts === 1 || !data.statePVTotal.isValid(),
+				`${largeFont !== true ? 'st14' : 'st4'} st8`,
+				solarColour,
+				auto_scale
+					? `${Utils.convertValue(totalGtPV, decimalPlaces) || 0}`
+					: `${Utils.toNum(totalGtPV || 0, 0)} ${UnitOfPower.WATT}`,
+				true,
+			)}
+			${
+				config.entities?.pv_total
+					? svg`
                     ${createTextWithPopup(
-											'pvtotal_power',
+											'pvtotal_all_power',
 											238.8,
-											133.9,
+											bigTotalBox ? '131' : '133.9',
+											mppts === 1 || !data.statePVTotal.isValid(),
+											`${largeFont !== true ? 'st14' : 'st4'} st8`,
+											solarColour,
+											auto_scale
+												? config.entities?.pv_total
+													? `${Utils.convertValueNew(totalAllPV, data.statePVTotal.getUOM(), decimalPlaces)}`
+													: `${Utils.convertValue(totalAllPV, decimalPlaces) || 0}`
+												: `${Utils.toNum(totalAllPV || 0, 0)} ${UnitOfPower.WATT}`,
+											(e) => Utils.handlePopup(e, config.entities.pv_total),
+											true,
+										)}`
+					: svg`
+                    ${renderText(
+											'pvtotal_all_power',
+											238.8,
+											bigTotalBox ? '131' : '133.9',
+											mppts === 1 || !data.statePVTotal.isValid(),
+											`${largeFont !== true ? 'st14' : 'st4'} st8`,
+											solarColour,
+											auto_scale
+												? config.entities?.pv_total
+													? `${Utils.convertValueNew(totalAllPV, data.statePVTotal.getUOM(), decimalPlaces)}`
+													: `${Utils.convertValue(totalAllPV, decimalPlaces) || 0}`
+												: `${Utils.toNum(totalAllPV || 0, 0)} ${UnitOfPower.WATT}`,
+											true,
+										)}`
+			}
+			${
+				!bigTotalBox
+					? ''
+					: config.entities?.pv_total
+						? svg`
+                    ${createTextWithPopup(
+											'pvtotal_inv_power',
+											238.8,
+											151,
 											mppts === 1 || !data.statePVTotal.isValid(),
 											`${largeFont !== true ? 'st14' : 'st4'} st8`,
 											solarColour,
@@ -642,9 +745,9 @@ export const renderSolarElements = (
 										)}`
 				: svg`
                     ${renderText(
-											'pvtotal_power',
+											'pvtotal_inv_power',
 											238.8,
-											133.9,
+											151,
 											mppts === 1 || !data.statePVTotal.isValid(),
 											`${largeFont !== true ? 'st14' : 'st4'} st8`,
 											solarColour,

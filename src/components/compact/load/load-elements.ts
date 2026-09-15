@@ -12,6 +12,7 @@ import { getCompactLayoutIconConfigs } from '../../shared/load/icon-configs';
 import { createTextWithPopup, renderText } from '../../../helpers/text-utils';
 import { renderPath } from '../../../helpers/render-path';
 import { renderCircle } from '../../../helpers/render-circle';
+import { renderLoad } from '../../../helpers/render-load';
 
 export const renderLoadElements = (
 	data: DataDto,
@@ -29,8 +30,8 @@ export const renderLoadElements = (
 		decimalPlaces,
 		loadColour,
 		flowColour,
-		solarColour,
-		batteryColour,
+			  
+				
 		essentialPower,
 	} = data;
 
@@ -825,69 +826,71 @@ export const renderLoadElements = (
 				data.load2Colour,
 				1,
 			)}
-			<a
-				href="#"
-				@click=${config.load?.navigate
-					? (e) => Utils.handleNavigation(e, config.load.navigate)
-					: null}
-			>
-				<svg
-					id="essen"
-					x="${data.essIconSize === 1 ? '405' : '402'}"
-					y="${data.essIconSize === 1 ? '186' : '177.5'}"
-					width="${data.essIconSize === 1 ? '75' : '79'}"
-					height="${data.essIconSize === 1 ? '75' : '79'}"
-					viewBox="0 0 24 24"
-				>
-					<defs>
-						<linearGradient
-							id="Lg-esscompact"
-							x1="0%"
-							x2="0%"
-							y1="100%"
-							y2="0%"
-						>
-							<stop
-								offset="0%"
-								stop-color="${data.gridPercentage > 0
-									? data.gridColour
-									: data.batteryPercentage > 0
-										? batteryColour
-										: solarColour}"
-							/>
-							<stop
-								offset="${data.gridPercentage}%"
-								stop-color="${data.gridPercentage > 0
-									? data.gridColour
-									: data.batteryPercentage > 0
-										? batteryColour
-										: solarColour}"
-							/>
-							<stop
-								offset="${data.gridPercentage}%"
-								stop-color="${data.batteryPercentage > 0
-									? batteryColour
-									: solarColour}"
-							/>
-							<stop
-								offset="${data.gridPercentage + data.batteryPercentage}%"
-								stop-color="${data.batteryPercentage > 0
-									? batteryColour
-									: solarColour}"
-							/>
-							<stop
-								offset="${data.gridPercentage + data.batteryPercentage}%"
-								stop-color="${solarColour}"
-							/>
-							<stop offset="100%" stop-color="${solarColour}" />
-						</linearGradient>
-					</defs>
-					<path
-						fill="${dynamic_colour ? `url(#Lg-esscompact)` : loadColour}"
-						d="${data.essIcon}"
-					/>
-				</svg>
-			</a>
+			${renderLoad(
+				'essen',
+				'Lg-esscompact',
+				data.essIcon,
+			
+	
+		
+			   
+				data.essIconSize,
+				405,
+				186,
+				config.load.navigate,
+													 
+						
+	 
+		   
+					 
+						 
+			  
+			  
+				
+			  
+	   
+			
+				   
+				data.gridPercentage,
+						  
+				data.batteryPercentage,
+						 
+						 
+		 
+			
+										
+											 
+						  
+									 
+						 
+						 
+		 
+			
+										
+												
+						
+						
+		 
+			
+																 
+												
+						
+						
+		 
+			
+																 
+								   
+		 
+														 
+					   
+			
+		  
+				dynamic_colour,
+				loadColour,
+				data,
+			)}
+		  
+	   
 			${createTextWithPopup(
 				'daily_load_value',
 				[2, 3, 4, 5, 6].includes(additionalLoad) ? '365' : '412',
@@ -908,7 +911,7 @@ export const renderLoadElements = (
 											219.2,
 											true,
 											`${largeFont !== true ? 'st14' : 'st4'} st8`,
-											loadColour,
+											dynamic_colour ? flowColour : loadColour,
 											auto_scale
 												? `${Utils.convertValue(essentialPower, decimalPlaces) || 0}`
 												: `${essentialPower || 0} ${UnitOfPower.WATT}`,
@@ -922,7 +925,7 @@ export const renderLoadElements = (
 											219.2,
 											true,
 											`${largeFont !== true ? 'st14' : 'st4'} st8`,
-											loadColour,
+											dynamic_colour ? flowColour : loadColour,
 											auto_scale
 												? `${Utils.convertValue(essentialPower, decimalPlaces) || 0}`
 												: `${essentialPower || 0} ${UnitOfPower.WATT}`,
