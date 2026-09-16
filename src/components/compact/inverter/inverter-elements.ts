@@ -100,6 +100,7 @@ export const renderInverterElements = (
 				cx="220"
 				cy="260"
 				r="3.5"
+				class="${!use_state_colour ? '' : 'st12'}"
 				fill="${data.inverterStateColour}"
 			/>
 			${guard(
@@ -131,6 +132,14 @@ export const renderInverterElements = (
 								</g>
 							</svg>`,
 			)}
+			<text
+				x="226"
+				y="260.75"
+				class="${use_state_colour ? 'st3 left-align' : 'st12'}"
+				fill="${inverterColour}"
+			>
+				${data.inverterStateMsg}
+			</text>
 			<a
 				href="#"
 				@click=${(e) => Utils.handlePopup(e, config.entities.use_timer_248)}

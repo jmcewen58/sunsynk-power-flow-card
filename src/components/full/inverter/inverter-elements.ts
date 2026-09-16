@@ -119,6 +119,7 @@ export const renderInverterElements = (
 				cx="160"
 				cy="304"
 				r="3.5"
+				class="${!use_state_colour ? '' : 'st12'}"
 				fill="${data.inverterStateColour}"
 			/>
 			${renderPath(
