@@ -24,9 +24,13 @@ export const renderInverterElements = (
 		enableAutarky,
 		enableTimer,
 		priorityLoad,
+		useStateColour,
 	} = data;
 
 	const { auto_scale, three_phase } = config.inverter;
+	const inverterColour2 = useStateColour
+		? data.inverterStateColour
+		: data.inverterColour;
 
 	return html`
 		<!-- Inverter Elements -->
@@ -44,7 +48,7 @@ export const renderInverterElements = (
 				rx="7.5"
 				ry="7.5"
 				fill="none"
-				stroke="${inverterColour}"
+				stroke="${inverterColour2}"
 				pointer-events="all"
 			/>
 			<text x="167" y="306" class="st3 left-align" fill="${inverterColour}">
@@ -115,6 +119,7 @@ export const renderInverterElements = (
 				cx="160"
 				cy="304"
 				r="3.5"
+				class="${!useStateColour ? '' : 'st12'}"
 				fill="${data.inverterStateColour}"
 			/>
 			${renderPath(
@@ -140,7 +145,7 @@ export const renderInverterElements = (
 									height="79" viewBox="0 0 74 91" preserveAspectRatio="xMidYMid meet"
 									opacity="${!data.genericInverterImage ? 0 : 1}">
 									<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)"
-									fill="${inverterColour}" stroke="none">
+									fill="${inverterColour2}" stroke="none">
 										<path d="${icons.inverter}"/>
 									</g>
 								</svg>
@@ -150,7 +155,7 @@ export const renderInverterElements = (
 								height="79" viewBox="0 0 74 91" preserveAspectRatio="xMidYMid meet"
 								opacity="${!data.genericInverterImage ? 0 : 1}">
 								<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)"
-								fill="${inverterColour}" stroke="none">
+								fill="${inverterColour2}" stroke="none">
 									<path d="${icons.inverter}"/>
 								</g>
 							</svg>`,
@@ -169,9 +174,11 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${data.stateUseTimer.state == 'on' && enableTimer !== 'no'
-							? ''
-							: 'none'}"
+						display="${
+							data.stateUseTimer.state == 'on' && enableTimer !== 'no'
+								? ''
+								: 'none'
+						}"
 						fill="${inverterColour}"
 						d="${icons.timerOn}"
 					/>
@@ -186,9 +193,11 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${data.stateUseTimer.state == 'off' && enableTimer !== 'no'
-							? ''
-							: 'none'}"
+						display="${
+							data.stateUseTimer.state == 'off' && enableTimer !== 'no'
+								? ''
+								: 'none'
+						}"
 						fill="${inverterColour}"
 						d="${icons.timerOff}"
 					/>
@@ -226,10 +235,11 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${priorityLoad === 'off' &&
-						(priorityLoad !== 'no' || !priorityLoad)
-							? ''
-							: 'none'}"
+						display="${
+							priorityLoad === 'off' && (priorityLoad !== 'no' || !priorityLoad)
+								? ''
+								: 'none'
+						}"
 						fill="${inverterColour}"
 						d="${icons.priorityLoadOff}"
 					/>
@@ -244,10 +254,11 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${priorityLoad === 'on' &&
-						(priorityLoad !== 'no' || !priorityLoad)
-							? ''
-							: 'none'}"
+						display="${
+							priorityLoad === 'on' && (priorityLoad !== 'no' || !priorityLoad)
+								? ''
+								: 'none'
+						}"
 						fill="${inverterColour}"
 						d="${icons.priorityLoadOn}"
 					/>
@@ -271,19 +282,21 @@ export const renderInverterElements = (
 					localize('common.priority_batt'),
 				)}
 			</a>
-			${config.inverter?.navigate
-				? svg`
+			${
+				config.inverter?.navigate
+					? svg`
                     <a href="#" @click=${(e) => Utils.handleNavigation(e, config.inverter.navigate)}>
                         <image x="155" y="224.75" width="53" height="72"
                             class="${!data.genericInverterImage ? '' : 'st12'}"
                             href="${inverterImg}"
                             preserveAspectRatio="none"/>
                     </a>`
-				: svg`
+					: svg`
                     <image x="155" y="224.75" width="53" height="72"
                         class="${!data.genericInverterImage ? '' : 'st12'}"
                         href="${inverterImg}"
-                        preserveAspectRatio="none"/>`}
+                        preserveAspectRatio="none"/>`
+			}
 			<a
 				href="#"
 				@click=${(e) => Utils.handlePopup(e, data.inverterProg.entityID)}
@@ -298,14 +311,18 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${data.inverterProg.show === false || enableTimer === 'no'
-							? 'none'
-							: ''}"
-						class="${data.inverterProg.charge === 'none' ||
-						(data.stateUseTimer.state != 'off' &&
-							data.stateUseTimer.state != 'on')
-							? 'st12'
-							: ''}"
+						display="${
+							data.inverterProg.show === false || enableTimer === 'no'
+								? 'none'
+								: ''
+						}"
+						class="${
+							data.inverterProg.charge === 'none' ||
+							(data.stateUseTimer.state != 'off' &&
+								data.stateUseTimer.state != 'on')
+								? 'st12'
+								: ''
+						}"
 						fill="${inverterColour}"
 						d="${icons.progGridOn}"
 					/>
@@ -320,14 +337,18 @@ export const renderInverterElements = (
 					viewBox="0 0 24 24"
 				>
 					<path
-						display="${data.inverterProg.show === false || enableTimer === 'no'
-							? 'none'
-							: ''}"
-						class="${data.inverterProg.charge === 'none' &&
-						(data.stateUseTimer.state === 'off' ||
-							data.stateUseTimer.state === 'on')
-							? ''
-							: 'st12'}"
+						display="${
+							data.inverterProg.show === false || enableTimer === 'no'
+								? 'none'
+								: ''
+						}"
+						class="${
+							data.inverterProg.charge === 'none' &&
+							(data.stateUseTimer.state === 'off' ||
+								data.stateUseTimer.state === 'on')
+								? ''
+								: 'st12'
+						}"
 						fill="${inverterColour}"
 						d="${icons.progGridOff}"
 					/>

@@ -78,6 +78,7 @@ export interface sunsynkPowerFlowCardConfig extends LovelaceCardConfig {
 		navigate: string;
 		label_autarky: string;
 		label_ratio: string;
+		use_colour_state: boolean;
 	};
 	battery: {
 		count: number;
@@ -619,4 +620,5 @@ export interface DataDto {
 	customGridIconColour;
 	maximumSOC;
 	batteryCount;
+	useStateColour;
 }
