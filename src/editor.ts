@@ -153,6 +153,7 @@ export class SunSynkCardEditor
 			'Card width: text value (e.g. 640) or an entity providing a numeric width.',
 		center_no_grid:
 			'When Grid is hidden, shift and narrow the view to center Solar/Battery/Loads.',
+        day_total: 'An entity that holds the current net cost of grid electricity today (only shows on compact/lite style) ',
 	};
 
 	// Utility: Parse unknown to finite number
@@ -1892,6 +1893,10 @@ export class SunSynkCardEditor
 													entity: { device_class: SensorDeviceClass.POWER },
 												},
 											},
+                                            {
+                                                name: 'day_total',
+                                                selector: { entity: {} },
+                                            },
 										],
 									},
 								],

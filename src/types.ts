@@ -371,6 +371,7 @@ export interface CardConfigEntities {
 	prog5_charge: string;
 	prog6_charge: string;
 	max_sell_power: string;
+    day_total: string;
 }
 
 export interface InverterSettings {
@@ -619,4 +620,5 @@ export interface DataDto {
 	customGridIconColour;
 	maximumSOC;
 	batteryCount;
+    stateDayGridNet;
 }

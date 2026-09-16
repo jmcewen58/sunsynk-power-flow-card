@@ -13,6 +13,24 @@ import { createTextWithPopup, renderText } from '../../../helpers/text-utils';
 import { renderPath } from '../../../helpers/render-path';
 import { renderCircle } from '../../../helpers/render-circle';
 
+const formatCurrency = (value: string | number | null | undefined, currency: string): string => {
+  if (value === null || value === undefined || value === '') {
+    return '';
+  }
+  
+  let num = typeof value === 'number' ? value : parseFloat(value);
+  
+  if (isNaN(num)) {
+    return '';
+  }
+
+  if (num <0) {
+    num = -num;
+    currency = `-{currency}`;
+  }
+
+  return `${currency}${num.toFixed(2)}`;
+}
 const renderGridIcons = (data: DataDto, config: sunsynkPowerFlowCardConfig) => {
 	const isGridConnected = validGridConnected.includes(
 		data.gridStatus.toLowerCase(),
@@ -232,6 +250,17 @@ export const renderGridElements = (
 				true,
 			)}
 			${createTextWithPopup(
+				'daily_grid_net_value',
+				5,
+				308,
+				!config.show_grid || !data.stateDayGridNet.isValid(),
+				'st10 left-align',
+				gridColour,
+				`${formatCurrency(data.stateDayGridNet?.state, data.stateDayGridNet.getUOM())} net`,
+				(e) => Utils.handlePopup(e, config.entities.day_total),
+				true,
+			)}
+            ${createTextWithPopup(
 				'daily_grid_sell_value',
 				5,
 				165,

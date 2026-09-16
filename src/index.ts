@@ -404,6 +404,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const stateDayPVEnergy = this.getEntity('entities.day_pv_energy_108');
 		const stateDayGridExport = this.getEntity('entities.day_grid_export_77');
 		const stateDayAuxEnergy = this.getEntity('entities.day_aux_energy');
+        const stateDayGridNet = this.getEntity('entities.day_total');
 
 		//Inverter
 		const stateInverterVoltage = this.getEntity(
@@ -2763,6 +2764,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			customGridIconColour,
 			maximumSOC,
 			batteryCount,
+            stateDayGridNet,
 		};
 
 		let template: TemplateResult | null = null;
