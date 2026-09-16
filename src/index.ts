@@ -595,6 +595,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const stateAuxLoad2Extra = this.getEntity('entities.aux_load2_extra');
 
 		//Grid
+        const stateDayGridNet = this.getEntity('entities.day_total');
 		const stateGridCTPower = this.getEntity('entities.grid_ct_power_172');
 		const stateGridCTPowerL2 = this.getEntity('entities.grid_ct_power_L2');
 		const stateGridCTPowerL3 = this.getEntity('entities.grid_ct_power_L3');
@@ -2686,6 +2687,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			stateDayGridImport,
 			stateDayBatteryCharge,
 			stateDayGridExport,
+            stateDayGridNet,
 			statePVTotal,
 			statePV1Power,
 			statePV2Power,

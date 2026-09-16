@@ -275,6 +275,7 @@ export interface CardConfigEntities {
 	battery2_current_191: string;
 	battery2_rated_capacity: string;
 	battery2_soh: string;
+    day_total: string;
 	grid_power_169: string;
 	grid_voltage: string;
 	day_grid_import_76: string;
@@ -536,6 +537,7 @@ export interface DataDto {
 	stateDayGridExport: CustomEntity;
 	stateDayPVEnergy: CustomEntity;
 	stateDayAuxEnergy: CustomEntity;
+    stateDayGridNet;
 	inverterProg;
 	stateUseTimer: CustomEntity;
 	stateBatterySoc: CustomEntity;

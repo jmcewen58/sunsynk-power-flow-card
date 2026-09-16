@@ -146,6 +146,7 @@ export class SunSynkCardEditor
 		path_threshold:
 			'The colour of the path will change to the source colour if the percentage supply by a single source equals or exceeds this value.',
 		max_power: 'Optional cap used for scaling and progress calculations.',
+        day_total: 'An entity that holds the current net cost of grid electricity today (only shows on compact/lite style) ',
 		title_size: "CSS font-size for title, e.g. '1.2em' or '18px'.",
 		card_height:
 			'Card height: text value (e.g. 360) or an entity providing a numeric height.',
@@ -1892,6 +1893,10 @@ export class SunSynkCardEditor
 													entity: { device_class: SensorDeviceClass.POWER },
 												},
 											},
+                                            {
+                                                name: 'day_total',
+                                                selector: { entity: {} },
+                                            },
 										],
 									},
 								],
