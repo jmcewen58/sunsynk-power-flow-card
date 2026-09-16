@@ -620,4 +620,5 @@ export interface DataDto {
 	customGridIconColour;
 	maximumSOC;
 	batteryCount;
+	useStateColour;
 }

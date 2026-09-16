@@ -1641,6 +1641,10 @@ export class SunsynkPowerFlowCard extends LitElement {
 			}
 		}
 
+		const useStateColour =
+			config.inverter.use_colour_state &&
+			!(inverterStateColour === 'transparent');
+
 		//Set Battery Status Message and dot for goodwe
 		let batteryStateColour = 'transparent';
 		let batteryStateMsg = '';
@@ -2763,6 +2767,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 			customGridIconColour,
 			maximumSOC,
 			batteryCount,
+			useStateColour,
 		};
 
 		let template: TemplateResult | null = null;

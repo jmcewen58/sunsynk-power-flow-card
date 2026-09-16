@@ -24,11 +24,11 @@ export const renderInverterElements = (
 		enableAutarky,
 		enableTimer,
 		priorityLoad,
+		useStateColour,
 	} = data;
 
 	const { auto_scale, three_phase } = config.inverter;
-	const use_state_colour = config.inverter.use_colour_state;
-	const inverterColour2 = use_state_colour
+	const inverterColour2 = useStateColour
 		? data.inverterStateColour
 		: data.inverterColour;
 
@@ -119,7 +119,7 @@ export const renderInverterElements = (
 				cx="160"
 				cy="304"
 				r="3.5"
-				class="${!use_state_colour ? '' : 'st12'}"
+				class="${!useStateColour ? '' : 'st12'}"
 				fill="${data.inverterStateColour}"
 			/>
 			${renderPath(

@@ -30,10 +30,11 @@ export const renderBatteryElements = (
 		isFloating2,
 		batteryShutdown,
 		batteryShutdown2,
+		useStateColour,
 	} = data;
 
 	const { auto_scale, show_absolute } = config.battery;
-	const batFlowTop = config.inverter.use_colour_state ? 267 : 250;
+	const batFlowTop = useStateColour ? 267 : 250;
 
 	250;
 

@@ -20,11 +20,16 @@ export const renderInverterElements = (
 	inverterImg: string,
 	config: sunsynkPowerFlowCardConfig,
 ) => {
-	const { inverterColour, enableAutarky, enableTimer, priorityLoad } = data;
+	const {
+		inverterColour,
+		enableAutarky,
+		enableTimer,
+		priorityLoad,
+		useStateColour,
+	} = data;
 
 	const { three_phase } = config.inverter;
-	const use_state_colour = config.inverter.use_colour_state;
-	const inverterColour2 = use_state_colour
+	const inverterColour2 = useStateColour
 		? data.inverterStateColour
 		: data.inverterColour;
 
@@ -100,7 +105,7 @@ export const renderInverterElements = (
 				cx="220"
 				cy="260"
 				r="3.5"
-				class="${!use_state_colour ? '' : 'st12'}"
+				class="${!useStateColour ? '' : 'st12'}"
 				fill="${data.inverterStateColour}"
 			/>
 			${guard(
@@ -135,7 +140,7 @@ export const renderInverterElements = (
 			<text
 				x="226"
 				y="260.75"
-				class="${use_state_colour ? 'st3 left-align' : 'st12'}"
+				class="${useStateColour ? 'st3 left-align' : 'st12'}"
 				fill="${inverterColour}"
 			>
 				${data.inverterStateMsg}
