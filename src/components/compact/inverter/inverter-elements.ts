@@ -23,9 +23,7 @@ export const renderInverterElements = (
 	const { inverterColour, enableAutarky, enableTimer, priorityLoad } = data;
 
 	const { three_phase } = config.inverter;
-	const use_state_colour =
-		config.inverter.use_colour_state &&
-		!(data.inverterStateColour === 'transparent');
+	const use_state_colour = config.inverter.use_colour_state;
 	const inverterColour2 = use_state_colour
 		? data.inverterStateColour
 		: data.inverterColour;
