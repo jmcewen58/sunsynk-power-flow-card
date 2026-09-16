@@ -37,17 +37,17 @@ export const renderBatteryElements = (
 		<!-- Battery Elements -->
 		<svg
 			id="Battery"
-			style="overflow: visible; display: ${!config.show_battery
-				? 'none'
-				: 'inline'};"
+			style="overflow: visible; display: ${
+				!config.show_battery ? 'none' : 'inline'
+			};"
 			x="${config.wide ? '3%' : '3%'}"
 			y="2.5%"
 		>
 			<svg
 				id="battery_total_power"
-				style="display: ${config.wide && batteryCount === 2
-					? 'inline'
-					: 'none'};"
+				style="display: ${
+					config.wide && batteryCount === 2 ? 'inline' : 'none'
+				};"
 			>
 				<rect
 					x="86"
@@ -57,9 +57,9 @@ export const renderBatteryElements = (
 					rx="4.5"
 					ry="4.5"
 					fill="none"
-					stroke="${config.battery.dynamic_colour
-						? data.flowBatColour
-						: batteryColour}"
+					stroke="${
+						config.battery.dynamic_colour ? data.flowBatColour : batteryColour
+					}"
 					pointer-events="all"
 					class="${data.compactMode ? '' : ''}"
 				/>
@@ -97,56 +97,62 @@ export const renderBatteryElements = (
 							<linearGradient id="bLg-bat1" x1="0%" x2="0%" y1="100%" y2="0%">
 								<stop
 									offset="0%"
-									stop-color="${data.gridPercentageBat > 0
-										? data.gridColour
-										: data.pvPercentageBat > 0
-											? data.solarColour
-											: batteryColour}"
+									stop-color="${
+										data.gridPercentageBat > 0
+											? data.gridColour
+											: data.pvPercentageBat > 0
+												? data.solarColour
+												: batteryColour
+									}"
 								/>
 								<stop
-									offset="${data.gridPercentageBat < 2
-										? 0
-										: data.gridPercentageBat}%"
-									stop-color="${data.gridPercentageBat > 0
-										? data.gridColour
-										: data.pvPercentageBat > 0
-											? data.solarColour
-											: batteryColour}"
+									offset="${
+										data.gridPercentageBat < 2 ? 0 : data.gridPercentageBat
+									}%"
+									stop-color="${
+										data.gridPercentageBat > 0
+											? data.gridColour
+											: data.pvPercentageBat > 0
+												? data.solarColour
+												: batteryColour
+									}"
 								/>
 								<stop
-									offset="${data.gridPercentageBat < 2
-										? 0
-										: data.gridPercentageBat}%"
-									stop-color="${data.pvPercentageBat > 0
-										? data.solarColour
-										: batteryColour}"
+									offset="${
+										data.gridPercentageBat < 2 ? 0 : data.gridPercentageBat
+									}%"
+									stop-color="${
+										data.pvPercentageBat > 0 ? data.solarColour : batteryColour
+									}"
 								/>
 								<stop
-									offset="${(data.gridPercentageBat < 2
-										? 0
-										: data.gridPercentageBat) +
-									(data.pvPercentageBat < 2 ? 0 : data.pvPercentageBat)}%"
-									stop-color="${data.pvPercentageBat > 0
-										? data.solarColour
-										: batteryColour}"
+									offset="${
+										(data.gridPercentageBat < 2 ? 0 : data.gridPercentageBat) +
+										(data.pvPercentageBat < 2 ? 0 : data.pvPercentageBat)
+									}%"
+									stop-color="${
+										data.pvPercentageBat > 0 ? data.solarColour : batteryColour
+									}"
 								/>
 								<stop
-									offset="${(data.gridPercentageBat < 2
-										? 0
-										: data.gridPercentageBat) +
-									(data.pvPercentageBat < 2 ? 0 : data.pvPercentageBat)}%"
+									offset="${
+										(data.gridPercentageBat < 2 ? 0 : data.gridPercentageBat) +
+										(data.pvPercentageBat < 2 ? 0 : data.pvPercentageBat)
+									}%"
 									stop-color="${batteryColour}"
 								/>
 								<stop offset="100%" stop-color="${batteryColour}" />
 							</linearGradient>
 						</defs>
 						<path
-							fill="${config.battery.dynamic_colour
-								? `url(#bLg-bat1)`
-								: batteryColour}"
-							d="${config.battery.linear_gradient
-								? data.battery0
-								: data.batteryIcon}"
+							fill="${
+								config.battery.dynamic_colour ? `url(#bLg-bat1)` : batteryColour
+							}"
+							d="${
+								config.battery.linear_gradient
+									? data.battery0
+									: data.batteryIcon
+							}"
 						/>
 					</svg>
 					<svg
@@ -172,9 +178,11 @@ export const renderBatteryElements = (
 							</linearGradient>
 						</defs>
 						<path
-							fill="${config.battery.linear_gradient
-								? `url(#sLg-bat1)`
-								: batteryColour}"
+							fill="${
+								config.battery.linear_gradient
+									? `url(#sLg-bat1)`
+									: batteryColour
+							}"
 							display="${!config.battery.linear_gradient ? 'none' : ''}"
 							d="${data.batteryCharge}"
 						/>
@@ -234,9 +242,9 @@ export const renderBatteryElements = (
 			</svg>
 			<svg
 				id="battery2_icon"
-				style="overflow: visible; display: ${batteryCount === 2
-					? 'inline'
-					: 'none'};"
+				style="overflow: visible; display: ${
+					batteryCount === 2 ? 'inline' : 'none'
+				};"
 				x="${batteryCount === 2 ? '19%' : '0%'}"
 			>
 				<a
@@ -260,56 +268,64 @@ export const renderBatteryElements = (
 							<linearGradient id="b2Lg-bat2" x1="0%" x2="0%" y1="100%" y2="0%">
 								<stop
 									offset="0%"
-									stop-color="${data.gridPercentageBat > 0
-										? data.gridColour
-										: data.pvPercentageBat > 0
-											? data.solarColour
-											: battery2Colour}"
+									stop-color="${
+										data.gridPercentageBat > 0
+											? data.gridColour
+											: data.pvPercentageBat > 0
+												? data.solarColour
+												: battery2Colour
+									}"
 								/>
 								<stop
-									offset="${data.gridPercentageBat < 2
-										? 0
-										: data.gridPercentageBat}%"
-									stop-color="${data.gridPercentageBat > 0
-										? data.gridColour
-										: data.pvPercentageBat > 0
-											? data.solarColour
-											: battery2Colour}"
+									offset="${
+										data.gridPercentageBat < 2 ? 0 : data.gridPercentageBat
+									}%"
+									stop-color="${
+										data.gridPercentageBat > 0
+											? data.gridColour
+											: data.pvPercentageBat > 0
+												? data.solarColour
+												: battery2Colour
+									}"
 								/>
 								<stop
-									offset="${data.gridPercentageBat < 2
-										? 0
-										: data.gridPercentageBat}%"
-									stop-color="${data.pvPercentageBat > 0
-										? data.solarColour
-										: battery2Colour}"
+									offset="${
+										data.gridPercentageBat < 2 ? 0 : data.gridPercentageBat
+									}%"
+									stop-color="${
+										data.pvPercentageBat > 0 ? data.solarColour : battery2Colour
+									}"
 								/>
 								<stop
-									offset="${(data.gridPercentageBat < 2
-										? 0
-										: data.gridPercentageBat) +
-									(data.pvPercentageBat < 2 ? 0 : data.pvPercentageBat)}%"
-									stop-color="${data.pvPercentageBat > 0
-										? data.solarColour
-										: battery2Colour}"
+									offset="${
+										(data.gridPercentageBat < 2 ? 0 : data.gridPercentageBat) +
+										(data.pvPercentageBat < 2 ? 0 : data.pvPercentageBat)
+									}%"
+									stop-color="${
+										data.pvPercentageBat > 0 ? data.solarColour : battery2Colour
+									}"
 								/>
 								<stop
-									offset="${(data.gridPercentageBat < 2
-										? 0
-										: data.gridPercentageBat) +
-									(data.pvPercentageBat < 2 ? 0 : data.pvPercentageBat)}%"
+									offset="${
+										(data.gridPercentageBat < 2 ? 0 : data.gridPercentageBat) +
+										(data.pvPercentageBat < 2 ? 0 : data.pvPercentageBat)
+									}%"
 									stop-color="${battery2Colour}"
 								/>
 								<stop offset="100%" stop-color="${battery2Colour}" />
 							</linearGradient>
 						</defs>
 						<path
-							fill="${config.battery2.dynamic_colour
-								? `url(#b2Lg-bat2)`
-								: battery2Colour}"
-							d="${config.battery2.linear_gradient
-								? data.battery20
-								: data.battery2Icon}"
+							fill="${
+								config.battery2.dynamic_colour
+									? `url(#b2Lg-bat2)`
+									: battery2Colour
+							}"
+							d="${
+								config.battery2.linear_gradient
+									? data.battery20
+									: data.battery2Icon
+							}"
 						/>
 					</svg>
 					<svg
@@ -335,9 +351,11 @@ export const renderBatteryElements = (
 							</linearGradient>
 						</defs>
 						<path
-							fill="${config.battery2.linear_gradient
-								? `url(#s2Lg-bat2)`
-								: battery2Colour}"
+							fill="${
+								config.battery2.linear_gradient
+									? `url(#s2Lg-bat2)`
+									: battery2Colour
+							}"
 							display="${!config.battery2.linear_gradient ? 'none' : ''}"
 							d="${data.battery2Charge}"
 						/>
@@ -399,9 +417,9 @@ export const renderBatteryElements = (
 			</svg>
 			<svg
 				id="battery1_remaining"
-				style="overflow: visible; display: ${batteryCount === 1
-					? 'inline'
-					: 'none'};"
+				style="overflow: visible; display: ${
+					batteryCount === 1 ? 'inline' : 'none'
+				};"
 			>
 				${renderText(
 					'duration_text',
@@ -465,10 +483,12 @@ export const renderBatteryElements = (
 				<svg
 					id="Battery1_SOC"
 					style="overflow: visible; 
-                        display: ${config.entities.battery_soc_184 === 'none' ||
-					!data.stateBatterySoc.isValid()
-						? 'none'
-						: 'inline'};"
+                        display: ${
+													config.entities.battery_soc_184 === 'none' ||
+													!data.stateBatterySoc.isValid()
+														? 'none'
+														: 'inline'
+												};"
 				>
 					${createTextWithPopup(
 						'battery_soc_184',
@@ -492,12 +512,14 @@ export const renderBatteryElements = (
 				<svg
 					id="Battery1_SOC_Program_Capacity"
 					style="overflow: visible; 
-                        display: ${config.entities.battery_soc_184 === 'none' ||
-					!data.stateBatterySoc.isValid() ||
-					config.battery.hide_soc ||
-					!data.inverterProg.show
-						? 'none'
-						: 'inline'};"
+                        display: ${
+													config.entities.battery_soc_184 === 'none' ||
+													!data.stateBatterySoc.isValid() ||
+													config.battery.hide_soc ||
+													!data.inverterProg.show
+														? 'none'
+														: 'inline'
+												};"
 				>
 					${createTextWithPopup(
 						'battery_soc_184',
@@ -513,14 +535,16 @@ export const renderBatteryElements = (
 				<svg
 					id="Battery1_SOC_Shutdown"
 					style="overflow: visible; 
-                        display: ${config.entities.battery_soc_184 !== 'none' &&
-					data.stateBatterySoc.isValid() &&
-					!config.battery.hide_soc &&
-					!data.inverterProg.show &&
-					config.battery?.shutdown_soc &&
-					!config.battery?.shutdown_soc_offgrid
-						? 'inline'
-						: 'none'};"
+                        display: ${
+													config.entities.battery_soc_184 !== 'none' &&
+													data.stateBatterySoc.isValid() &&
+													!config.battery.hide_soc &&
+													!data.inverterProg.show &&
+													config.battery?.shutdown_soc &&
+													!config.battery?.shutdown_soc_offgrid
+														? 'inline'
+														: 'none'
+												};"
 				>
 					${createTextWithPopup(
 						'battery_soc_184',
@@ -548,9 +572,9 @@ export const renderBatteryElements = (
 
 			<svg
 				id="two_batteries_battery1_remaining"
-				style="overflow: visible; display: ${batteryCount === 2
-					? 'inline'
-					: 'none'};"
+				style="overflow: visible; display: ${
+					batteryCount === 2 ? 'inline' : 'none'
+				};"
 				x="-20%"
 			>
 				${renderText(
@@ -615,10 +639,12 @@ export const renderBatteryElements = (
 				<svg
 					id="Battery1_SOC"
 					style="overflow: visible; 
-                        display: ${config.entities.battery_soc_184 === 'none' ||
-					!data.stateBatterySoc.isValid()
-						? 'none'
-						: 'inline'};"
+                        display: ${
+													config.entities.battery_soc_184 === 'none' ||
+													!data.stateBatterySoc.isValid()
+														? 'none'
+														: 'inline'
+												};"
 				>
 					${createTextWithPopup(
 						'battery_soc_184',
@@ -642,12 +668,14 @@ export const renderBatteryElements = (
 				<svg
 					id="Battery1_SOC_Program_Capacity"
 					style="overflow: visible; 
-                        display: ${config.entities.battery_soc_184 === 'none' ||
-					!data.stateBatterySoc.isValid() ||
-					config.battery.hide_soc ||
-					!data.inverterProg.show
-						? 'none'
-						: 'inline'};"
+                        display: ${
+													config.entities.battery_soc_184 === 'none' ||
+													!data.stateBatterySoc.isValid() ||
+													config.battery.hide_soc ||
+													!data.inverterProg.show
+														? 'none'
+														: 'inline'
+												};"
 				>
 					${createTextWithPopup(
 						'battery_soc_184',
@@ -663,14 +691,16 @@ export const renderBatteryElements = (
 				<svg
 					id="Battery1_SOC_Shutdown"
 					style="overflow: visible; 
-                        display: ${config.entities.battery_soc_184 !== 'none' &&
-					data.stateBatterySoc.isValid() &&
-					!config.battery.hide_soc &&
-					!data.inverterProg.show &&
-					config.battery?.shutdown_soc &&
-					!config.battery?.shutdown_soc_offgrid
-						? 'inline'
-						: 'none'};"
+                        display: ${
+													config.entities.battery_soc_184 !== 'none' &&
+													data.stateBatterySoc.isValid() &&
+													!config.battery.hide_soc &&
+													!data.inverterProg.show &&
+													config.battery?.shutdown_soc &&
+													!config.battery?.shutdown_soc_offgrid
+														? 'inline'
+														: 'none'
+												};"
 				>
 					${createTextWithPopup(
 						'battery_soc_184',
@@ -697,9 +727,9 @@ export const renderBatteryElements = (
 			</svg>
 			<svg
 				id="battery2_remaining"
-				style="overflow: visible; display: ${batteryCount === 2
-					? 'inline'
-					: 'none'};"
+				style="overflow: visible; display: ${
+					batteryCount === 2 ? 'inline' : 'none'
+				};"
 				x="${batteryCount === 2 ? '25%' : '0%'}"
 			>
 				${renderText(
@@ -764,10 +794,12 @@ export const renderBatteryElements = (
 				<svg
 					id="Battery2_SOC"
 					style="overflow: visible; 
-                        display: ${config.entities.battery2_soc_184 ===
-						'none' || !data.stateBattery2Soc.isValid()
-						? 'none'
-						: 'inline'};"
+                        display: ${
+													config.entities.battery2_soc_184 === 'none' ||
+													!data.stateBattery2Soc.isValid()
+														? 'none'
+														: 'inline'
+												};"
 				>
 					${createTextWithPopup(
 						'battery_soc_184',
@@ -791,13 +823,14 @@ export const renderBatteryElements = (
 				<svg
 					id="Battery2_SOC_Program_Capacity"
 					style="overflow: visible; 
-                        display: ${config.entities.battery2_soc_184 ===
-						'none' ||
-					!data.stateBattery2Soc.isValid() ||
-					config.battery2.hide_soc ||
-					!data.inverterProg.show
-						? 'none'
-						: 'inline'};"
+                        display: ${
+													config.entities.battery2_soc_184 === 'none' ||
+													!data.stateBattery2Soc.isValid() ||
+													config.battery2.hide_soc ||
+													!data.inverterProg.show
+														? 'none'
+														: 'inline'
+												};"
 				>
 					${createTextWithPopup(
 						'battery_soc_184',
@@ -815,15 +848,16 @@ export const renderBatteryElements = (
 				<svg
 					id="Battery2_SOC_Shutdown"
 					style="overflow: visible; 
-                        display: ${config.entities.battery2_soc_184 !==
-						'none' &&
-					data.stateBattery2Soc.isValid() &&
-					!config.battery2.hide_soc &&
-					!data.inverterProg.show &&
-					config.battery2?.shutdown_soc &&
-					!config.battery2?.shutdown_soc_offgrid
-						? 'inline'
-						: 'none'};"
+                        display: ${
+													config.entities.battery2_soc_184 !== 'none' &&
+													data.stateBattery2Soc.isValid() &&
+													!config.battery2.hide_soc &&
+													!data.inverterProg.show &&
+													config.battery2?.shutdown_soc &&
+													!config.battery2?.shutdown_soc_offgrid
+														? 'inline'
+														: 'none'
+												};"
 				>
 					${createTextWithPopup(
 						'battery_soc_184',
@@ -854,10 +888,12 @@ export const renderBatteryElements = (
 					cx="136"
 					cy="377"
 					r="3"
-					display="${config.entities?.battery2_status === 'none' ||
-					!config.entities?.battery2_status
-						? 'none'
-						: ''}"
+					display="${
+						config.entities?.battery2_status === 'none' ||
+						!config.entities?.battery2_status
+							? 'none'
+							: ''
+					}"
 					fill="${data.battery2StateColour}"
 				/>
 				<text x="144" y="378" class="st3 left-align" fill="${battery2Colour}">
@@ -942,9 +978,9 @@ export const renderBatteryElements = (
 			</svg>
 			<svg
 				id="battery2_data"
-				style="overflow: visible; display: ${batteryCount === 2
-					? 'inline'
-					: 'none'};"
+				style="overflow: visible; display: ${
+					batteryCount === 2 ? 'inline' : 'none'
+				};"
 				x="36%"
 			>
 				<rect
@@ -1014,17 +1050,21 @@ export const renderBatteryElements = (
 			</svg>
 			<circle
 				id="bat"
-				cx="${batteryCount === 2
-					? '-8'
-					: !config.battery.show_remaining_energy
-						? '73'
-						: '8'}"
+				cx="${
+					batteryCount === 2
+						? '-8'
+						: !config.battery.show_remaining_energy
+							? '73'
+							: '8'
+				}"
 				cy="377"
 				r="3"
-				display="${config.entities?.battery_status === 'none' ||
-				!config.entities?.battery_status
-					? 'none'
-					: ''}"
+				display="${
+					config.entities?.battery_status === 'none' ||
+					!config.entities?.battery_status
+						? 'none'
+						: ''
+				}"
 				fill="${data.batteryStateColour}"
 			/>
 			${renderText(
