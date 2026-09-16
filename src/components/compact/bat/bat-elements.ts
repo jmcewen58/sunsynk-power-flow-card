@@ -30,9 +30,11 @@ export const renderBatteryElements = (
 		isFloating2,
 		batteryShutdown,
 		batteryShutdown2,
+		useStateColour,
 	} = data;
 
 	const { auto_scale, show_absolute } = config.battery;
+	const batFlowTop = useStateColour ? 267 : 250;
 
 	return html`
 		<!-- Battery Elements -->
@@ -1340,10 +1342,10 @@ export const renderBatteryElements = (
 					${renderPath(
 						'bat-line',
 						batteryCount === 2
-							? 'M 239 250 L 239 285'
+							? `M 239 +${batFlowTop} L 239 285`
 							: compactMode
-								? 'M 239 250 L 239 290'
-								: 'M 239 250 L 239 324',
+								? `M 239 ${batFlowTop} L 239 290`
+								: `M 239 ${batFlowTop} L 239 324`,
 						true,
 						config.battery.dynamic_colour ? data.flowBatColour : batteryColour,
 						data.batLineWidth,

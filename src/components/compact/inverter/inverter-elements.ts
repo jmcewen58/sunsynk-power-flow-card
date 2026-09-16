@@ -20,9 +20,18 @@ export const renderInverterElements = (
 	inverterImg: string,
 	config: sunsynkPowerFlowCardConfig,
 ) => {
-	const { inverterColour, enableAutarky, enableTimer, priorityLoad } = data;
+	const {
+		inverterColour,
+		enableAutarky,
+		enableTimer,
+		priorityLoad,
+		useStateColour,
+	} = data;
 
 	const { three_phase } = config.inverter;
+	const inverterColour2 = useStateColour
+		? data.inverterStateColour
+		: data.inverterColour;
 
 	return html`
 		<!-- Inverter Elements -->
@@ -96,6 +105,7 @@ export const renderInverterElements = (
 				cx="220"
 				cy="260"
 				r="3.5"
+				class="${!useStateColour ? '' : 'st12'}"
 				fill="${data.inverterStateColour}"
 			/>
 			${guard(
@@ -112,7 +122,7 @@ export const renderInverterElements = (
 									height="79" viewBox="0 0 74 91" preserveAspectRatio="xMidYMid meet"
 									opacity="${!data.genericInverterImage ? 0 : 1}">
 									<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)"
-									fill="${inverterColour}" stroke="none">
+									fill="${inverterColour2}" stroke="none">
 										<path d="${icons.inverter}"/>
 									</g>
 								</svg>
@@ -122,11 +132,19 @@ export const renderInverterElements = (
 								height="79" viewBox="0 0 74 91" preserveAspectRatio="xMidYMid meet"
 								opacity="${!data.genericInverterImage ? 0 : 1}">
 								<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)"
-								fill="${inverterColour}" stroke="none">
+								fill="${inverterColour2}" stroke="none">
 									<path d="${icons.inverter}"/>
 								</g>
 							</svg>`,
 			)}
+			<text
+				x="226"
+				y="260.75"
+				class="${useStateColour ? 'st3 left-align' : 'st12'}"
+				fill="${inverterColour}"
+			>
+				${data.inverterStateMsg}
+			</text>
 			<a
 				href="#"
 				@click=${(e) => Utils.handlePopup(e, config.entities.use_timer_248)}

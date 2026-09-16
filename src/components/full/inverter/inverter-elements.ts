@@ -24,9 +24,13 @@ export const renderInverterElements = (
 		enableAutarky,
 		enableTimer,
 		priorityLoad,
+		useStateColour,
 	} = data;
 
 	const { auto_scale, three_phase } = config.inverter;
+	const inverterColour2 = useStateColour
+		? data.inverterStateColour
+		: data.inverterColour;
 
 	return html`
 		<!-- Inverter Elements -->
@@ -44,7 +48,7 @@ export const renderInverterElements = (
 				rx="7.5"
 				ry="7.5"
 				fill="none"
-				stroke="${inverterColour}"
+				stroke="${inverterColour2}"
 				pointer-events="all"
 			/>
 			<text x="167" y="306" class="st3 left-align" fill="${inverterColour}">
@@ -115,6 +119,7 @@ export const renderInverterElements = (
 				cx="160"
 				cy="304"
 				r="3.5"
+				class="${!useStateColour ? '' : 'st12'}"
 				fill="${data.inverterStateColour}"
 			/>
 			${renderPath(
@@ -140,7 +145,7 @@ export const renderInverterElements = (
 									height="79" viewBox="0 0 74 91" preserveAspectRatio="xMidYMid meet"
 									opacity="${!data.genericInverterImage ? 0 : 1}">
 									<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)"
-									fill="${inverterColour}" stroke="none">
+									fill="${inverterColour2}" stroke="none">
 										<path d="${icons.inverter}"/>
 									</g>
 								</svg>
@@ -150,7 +155,7 @@ export const renderInverterElements = (
 								height="79" viewBox="0 0 74 91" preserveAspectRatio="xMidYMid meet"
 								opacity="${!data.genericInverterImage ? 0 : 1}">
 								<g transform="translate(0.000000,91.000000) scale(0.100000,-0.100000)"
-								fill="${inverterColour}" stroke="none">
+								fill="${inverterColour2}" stroke="none">
 									<path d="${icons.inverter}"/>
 								</g>
 							</svg>`,

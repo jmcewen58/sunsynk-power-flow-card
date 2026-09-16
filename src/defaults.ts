@@ -25,6 +25,7 @@ export default {
 		navigate: '',
 		label_autarky: '',
 		label_ratio: '',
+		use_state_colour: false,
 	},
 	battery: {
 		count: 1,
