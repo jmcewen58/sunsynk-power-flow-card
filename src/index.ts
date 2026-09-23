@@ -55,6 +55,10 @@ console.groupCollapsed(
 console.log('Readme:', 'https://github.com/slipx06/sunsynk-power-flow-card');
 console.groupEnd();
 
+declare global {
+    var forceWtoKW: boolean;
+}
+
 @customElement(MAIN_NAME)
 export class SunsynkPowerFlowCard extends LitElement {
 	// Coalesced Home Assistant state: throttle updates to once per animation frame
@@ -647,6 +651,7 @@ export class SunsynkPowerFlowCard extends LitElement {
 		);
 
 		//Set defaults
+        globalThis.forceWtoKW = config.force_kw;
 		const invert_aux = config.load?.invert_aux ?? false;
 		const auxPower = stateAuxPower.toPower(invert_aux);
 

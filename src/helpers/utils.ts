@@ -84,7 +84,7 @@ export class Utils {
 		if (Math.abs(value) >= 1000000) {
 			const scaled = value / 1000000;
 			return `${Utils.formatNumberLocale(scaled, decimal)} MW`;
-		} else if (Math.abs(value) >= 1000) {
+		} else if (Math.abs(value) >= 1000 || globalThis.forceWtoKW) {
 			const scaled = value / 1000;
 			return `${Utils.formatNumberLocale(scaled, decimal)} kW`;
 		} else {

@@ -76,6 +76,7 @@ export class SunSynkCardEditor
 	// Static lookup for help text (faster than switch-case)
 	private static readonly HELP_TEXT: Record<string, string> = {
 		large_font: 'Use a larger font for card entities.',
+        force_kw: 'Will show power values less than 1 kW as decimal kW instead of watts',
 		wide: 'Use a wide layout for the card.',
 		additional_loads: 'Number of additional loads to configure (0–6).',
 		colour: 'Primary colour for this element.',
@@ -531,6 +532,7 @@ export class SunSynkCardEditor
 				name: 'decimal_places_energy',
 				selector: { number: { min: 0, max: 3, step: 1, mode: 'box' } },
 			},
+			{ name: 'force_kw', selector: { boolean: {} } },
 			{ name: 'dynamic_line_width', selector: { boolean: {} } },
 		];
 		if (this._config.dynamic_line_width) {
@@ -1953,7 +1955,7 @@ export class SunSynkCardEditor
 				const max = cfg.max_line_width as number | undefined;
 				const min = cfg.min_line_width as number | undefined;
 				if (typeof max === 'number' && typeof min === 'number') {
-					return `${base} (min ${min} – max ${max})`;
+					return `${base} (min ${min} – max ${max})`;1
 				}
 				return `${base} (${this._t('config.inline.enabled', 'enabled')})`;
 			}
