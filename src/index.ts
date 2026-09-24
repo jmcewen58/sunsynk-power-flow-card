@@ -55,6 +55,10 @@ console.groupCollapsed(
 console.log('Readme:', 'https://github.com/slipx06/sunsynk-power-flow-card');
 console.groupEnd();
 
+declare global {
+    var enhancedLabelColour: string;
+}
+
 @customElement(MAIN_NAME)
 export class SunsynkPowerFlowCard extends LitElement {
 	// Coalesced Home Assistant state: throttle updates to once per animation frame
@@ -676,7 +680,9 @@ export class SunsynkPowerFlowCard extends LitElement {
 		const decimalPlaces = config.decimal_places;
 		const decimalPlacesEnergy = config.decimal_places_energy;
 
-		const loadColour = this.colourConvert(config.load?.colour);
+        globalThis.enhancedLabelColour = config.enhance_label_text ? this.colourConvert(config.enhanced_label_colour) : '';
+
+        const loadColour = this.colourConvert(config.load?.colour);
 		const auxDynamicColour =
 			this.calculateAuxLoadColour(
 				stateAuxPower.toPower(false),

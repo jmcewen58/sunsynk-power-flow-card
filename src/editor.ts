@@ -79,6 +79,7 @@ export class SunSynkCardEditor
 		wide: 'Use a wide layout for the card.',
 		additional_loads: 'Number of additional loads to configure (0–6).',
 		colour: 'Primary colour for this element.',
+        enhanced_label_text: 'Change the colour for all (non-power) labels.',
 		efficiency:
 			'Show the effeciency of the mppts strings based on their max power.',
 		display_mode:
@@ -458,6 +459,10 @@ export class SunSynkCardEditor
 			this._toRgb((c as unknown as Record<string, unknown>)['title_colour']) ??
 			undefined;
 
+        copy.enhanced_label_colour = 
+			this._toRgb((c as unknown as Record<string, unknown>)['enhanced_label_colour']) ??
+			undefined;
+
 		// Convert section colours to RGB format
 		copy.inverter = this._convertSectionColours(
 			c.inverter as Record<string, unknown>,
@@ -532,6 +537,7 @@ export class SunSynkCardEditor
 				selector: { number: { min: 0, max: 3, step: 1, mode: 'box' } },
 			},
 			{ name: 'dynamic_line_width', selector: { boolean: {} } },
+            { name: 'enhance_label_text', selector: { boolean: {} } },
 		];
 		if (this._config.dynamic_line_width) {
 			generalGridSchema.push(
@@ -542,6 +548,14 @@ export class SunSynkCardEditor
 				{
 					name: 'min_line_width',
 					selector: { number: { min: 1, max: 8, step: 1, mode: 'box' } },
+				},
+			);
+		}
+        if (this._config.enhance_label_text) {
+			generalGridSchema.push(
+				{
+					name: 'enhanced_label_colour',
+					selector: { color_rgb: {} },
 				},
 			);
 		}
